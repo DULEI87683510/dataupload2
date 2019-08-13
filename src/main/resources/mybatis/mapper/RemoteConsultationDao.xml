@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hyc.upload.dataupload.uploadDao.RemoteConsultationDao">
+<select id="getAll"  resultType="hyc.upload.dataupload.uploadEntity.RemoteConsultationEntity">
+select a.id as thirdUniqueid ,a.appid as meetingNum , e.name as applyOrgName,c.name as applyDocName,d.name as applySection, a.conclusions as
+ applyDiagnosis, to_char(a.create_date,'YYYY-MM-DD HH:mm:ss') as  applyDateTime,a.name as patientName, a.sex as patientSex,
+  to_char(a.age)  as patientAge,a.id_number as patientIdcardNum ,a.consultation_nature as HZXZ,a.consultation_type AS HZLX
+ from hz_apply a left join hz_hospital_info e on  e.id=a.apply_hosp left join hz_department d on  a.apply_department=d.id left join sys_user c on  a.applicant=c.id
+ where a.state='已结束' and a.consultation_nature is not null and a.consultation_type is not null  and (select COUNT(*) from hz_consultant g where a.appid=g.appid ) >0
+
+
+</select>
+    <select id="getDictName" resultType="java.lang.String" parameterType="java.lang.String" >
+        select
+        b.name as "dictname"
+        from sys_area b
+        where b.id=(select distinct a.area from hz_hospital_info a where a.name=#{hospName} and a.del_flag='0' and a.useable='1' )
+    </select>
+
+    <select id="getByApplyId" resultType="hyc.upload.dataupload.uploadEntity.Consultant" parameterType="java.lang.String" >
+      select a.suggestion as meetingOpinion,b.name as meetingDocName,c.name as meetingSection,a.transfer as isReferral, to_char(a.schedule,'YYYY-MM-DD HH:mm:ss') as meetingTime
+       from hz_consultant a left join sys_user b on b.id=a.doctor_id left join hz_department c  on c.id=a.department
+        where a.appid=#{id} and  a.transfer is not null
+    </select>
+
+    <select id="getByTime"  resultType="hyc.upload.dataupload.uploadEntity.RemoteConsultationEntity">
+        select a.id as thirdUniqueid ,a.appid as meetingNum , e.name as applyOrgName,c.name as applyDocName,d.name as applySection, a.conclusions as
+        applyDiagnosis, to_char(a.create_date,'YYYY-MM-DD HH:mm:ss') as  applyDateTime,a.name as patientName, a.sex as patientSex, to_char(a.age)  as patientAge,a.id_number as patientIdcardNum ,
+        a.consultation_nature as HZXZ,a.consultation_type AS HZLX
+        from hz_apply a left join hz_hospital_info e on  e.id=a.apply_hosp left join hz_department d on  a.apply_department=d.id left join sys_user c on  a.applicant=c.id
+        where a.state='已结束' and a.consultation_nature is not null and a.consultation_type is not null   and (select COUNT(*) from hz_consultant g where a.appid=g.appid ) >0   and  <![CDATA[ a.schedule>=sysdate-1 and a.schedule < = sysdate ]]>
+
+
+    </select>
+</mapper>

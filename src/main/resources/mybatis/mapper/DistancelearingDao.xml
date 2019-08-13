@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hyc.upload.dataupload.uploadDao.DistancelearingDao">
+
+<select id="getAll" resultType="hyc.upload.dataupload.uploadEntity.DistanceLearning">
+select a.id as thirdUniqueid, to_char(a.arrangedtime,'YYYY-MM-DD HH:mm:ss') as trainTime,
+a.name as trainProject  from ycjy_course a where a.arrangedtime is not null and a.name is not NULL
+</select>
+    <select id="getByTime" resultType="hyc.upload.dataupload.uploadEntity.DistanceLearning">
+        select a.id as thirdUniqueid, to_char(a.arrangedtime,'YYYY-MM-DD HH:mm:ss') as trainTime
+        ,a.name as trainProject  from ycjy_course a where a.arrangedtime is not null and a.name is not NULL  and  <![CDATA[ a.arrangedtime>=sysdate-1 and a.arrangedtime < = sysdate ]]>
+    </select>
+	
+</mapper>
+
